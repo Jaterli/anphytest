@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class UsersManagementService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/admin/users`;
+  private apiUrl = `${environment.apiUrl}/user/admin`;
 
   // Método para obtener usuarios con estadísticas, paginación, filtrado y ordenación
   getUsersStats(filters: UsersStatsFilters = {}): Observable<UserStatsFullResponse> {
@@ -45,11 +45,6 @@ export class UsersManagementService {
   getUserProfile(id: number): Observable<{ user: User }> {
     return this.http.get<{ user: User }>(`${this.apiUrl}/${id}/profile`);
   }
-
-  // Método para obtener un usuario específico con detalles completos
-  // getUserDetails(id: number): Observable<{ user: UserStats }> {
-  //   return this.http.get<{ user: UserStats }>(`${this.apiUrl}/${id}/details`);
-  // }
 
   // Método para eliminar usuario
   deleteUser(id: number): Observable<{ message: string, deleted_user_id: string }> {

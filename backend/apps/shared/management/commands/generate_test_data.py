@@ -1,15 +1,18 @@
 # apps/shared/management/commands/generate_test_data.py
+
+# Genera tets, preguntas, respuestas, usuarios, etc
+
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db import transaction
 from apps.accounts.models import User
-from apps.test.models import Test, Question, Answer
+from apps.test.models import Test
 from apps.results.models import Result
 from apps.shared.models import get_topics
 from datetime import datetime, timedelta
 import random
 import logging
-from faker import Faker
+from faker import Faker #type: ignore
 from typing import Dict, Optional
 from dataclasses import dataclass
 from enum import Enum

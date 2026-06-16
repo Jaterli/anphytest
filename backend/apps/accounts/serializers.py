@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import User
+from apps.accounts.models import User
 
 class UserResponseSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,6 +1,6 @@
 # apps/tests/serializers.py
-from rest_framework import serializers
-from .models import Test, Question, Answer, Topic
+from rest_framework import serializers # type: ignore
+from .models import Test, Question, Answer
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:

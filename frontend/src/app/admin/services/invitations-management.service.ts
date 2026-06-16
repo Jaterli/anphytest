@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class InvitationsManagementService {
-  private apiUrl = `${environment.apiUrl}/admin/invitations`;
+  private apiUrl = `${environment.apiUrl}/invitations/admin`;
 
   constructor(private http: HttpClient) {}
 
@@ -53,12 +53,12 @@ export class InvitationsManagementService {
   }
 
   deleteInvitationsBulk(ids: number[]): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/bulk`, {
+    return this.http.delete(`${this.apiUrl}/bulk-delete/`, {
       body: { ids }
     });
   }
 
   getInvitationStats(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/stats`);
+    return this.http.get(`${this.apiUrl}/stats/`);
   }
 }

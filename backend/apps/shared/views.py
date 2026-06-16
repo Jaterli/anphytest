@@ -42,6 +42,7 @@ def get_topics_view(request):
         logger.error(f"Error getting topics: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
 
+
 @require_http_methods(["GET"])
 def get_main_topics_view(request):
     """Obtiene solo los temas principales"""

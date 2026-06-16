@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class TestsManagementService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/admin/tests`;
+  private apiUrl = `${environment.apiUrl}/test/admin`;
 
 
   getTestById(id: number): Observable<Test> {

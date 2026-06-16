@@ -1,3 +1,5 @@
+import { User } from "./user.models";
+
 // invitation.model.ts
 export interface TestInvitation {
   id: number;
@@ -51,7 +53,11 @@ export interface AcceptInvitationResponse {
   transferred_from_guest?: boolean;
   auto_authenticated?: boolean;
   message: string;
+  access_token?: string;
+  token_type?: string;
+  user?: User
 }
+
 
 export interface GuestAcceptResponse {
   test_id: number;

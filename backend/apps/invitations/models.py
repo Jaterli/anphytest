@@ -2,15 +2,17 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from datetime import timedelta
 import secrets
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 class TestInvitation(models.Model):
     """Modelo para invitaciones a tests"""
     test = models.ForeignKey(
-        'test.Test', 
+        'test.Test',
         on_delete=models.CASCADE,
         related_name='invitations'
     )
@@ -33,7 +35,7 @@ class TestInvitation(models.Model):
     expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         db_table = 'test_invitations'
         ordering = ['-created_at']
@@ -44,36 +46,32 @@ class TestInvitation(models.Model):
             models.Index(fields=['guest_user', 'is_used']),
             models.Index(fields=['expires_at']),
         ]
-    
+
     def __str__(self):
         return f"Invitation to {self.test.title} by {self.invited_by.username}"
-    
+
     def save(self, *args, **kwargs):
         if not self.token:
             self.token = secrets.token_hex(32)
         if not self.expires_at:
-            self.expires_at = timezone.now() + timezone.timedelta(days=7)
+            # FIX: timezone.timedelta does not exist; use datetime.timedelta
+            self.expires_at = timezone.now() + timedelta(days=7)
         super().save(*args, **kwargs)
-    
+
     @property
     def status(self):
-        """Retorna el estado de la invitación"""
         if self.is_used:
             return 'used'
         if self.expires_at < timezone.now():
             return 'expired'
         return 'active'
-    
+
     @property
     def is_expired(self):
-        """Verifica si la invitación está expirada"""
         return self.expires_at < timezone.now()
-    
+
     @property
     def invitation_url(self):
-        """Genera la URL de la invitación"""
-        # En producción, usar el dominio configurado
-        from django.conf import settings
         base_url = getattr(settings, 'SITE_URL', 'http://localhost:8000')
         return f"{base_url}/invitation/accept?token={self.token}"
 
@@ -88,7 +86,7 @@ class InvitationEvent(models.Model):
         ('deleted', 'Deleted'),
         ('transferred', 'Transferred'),
     ]
-    
+
     invitation = models.ForeignKey(
         TestInvitation,
         on_delete=models.CASCADE,
@@ -103,10 +101,10 @@ class InvitationEvent(models.Model):
     )
     metadata = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         db_table = 'invitation_events'
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return f"{self.event_type} - {self.invitation.token} at {self.created_at}"

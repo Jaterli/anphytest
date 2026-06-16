@@ -262,5 +262,19 @@ export class AuthService {
       })
     );
   }
+
+ setCurrentUser(user: User): void {
+    if (this.isBrowser()) {
+      this.setUser(user);
+    }
+  }
+
+  getToken(): string | null {
+    if (this.isBrowser()) {
+      return localStorage.getItem('access_token');
+    }
+    return null;
+  }
+
  
 }

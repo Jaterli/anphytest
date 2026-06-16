@@ -17,6 +17,12 @@ urlpatterns = [
     path('<int:test_id>/questions/<int:question_number>/', views.get_single_question, name='get_single_question'),
     path('<int:test_id>/next-question/', views.get_next_unanswered_question, name='get_next_unanswered_question'),
 
-    # Resultados
-    path('results/<int:result_id>/incorrect-answers/', views.get_incorrect_answers, name='incorrect_answers'),
+
+    # Admin Endpoints
+    path('admin/<int:test_id>/', views.get_test_by_id, name='get_test_by_id'),
+    path('admin/all', views.get_all_tests, name='get_all_tests'),
+    path('admin/create/', views.create_test, name='create_test'),
+    path('admin/<int:test_id>/edit/', views.update_test, name='update_test'),
+    path('admin/<int:test_id>/delete/', views.delete_test, name='delete_test'),
+
 ]

@@ -64,7 +64,7 @@ def invalidate_topics_cache():
 
 
 def get_topics(include_predefined=True, force_refresh=False):
-    """Obtiene la jerarquía completa de temas"""
+    """Obtiene la jerarquía completa de temas en formato anidado"""
     cache_key = get_topics_cache_key(include_predefined)
     
     if not force_refresh:
@@ -72,11 +72,12 @@ def get_topics(include_predefined=True, force_refresh=False):
         if cached_data is not None:
             return cached_data
     
-    # Construir jerarquía
+    # Construir jerarquía en formato anidado
     queryset = Topic.objects.all()
     if not include_predefined:
         queryset = queryset.filter(is_predefined=False)
     
+    # Estructura anidada: {main_topic: {sub_topic: [specific_topics]}}
     hierarchy = {}
     for topic in queryset:
         if topic.main_topic not in hierarchy:
@@ -86,23 +87,17 @@ def get_topics(include_predefined=True, force_refresh=False):
         if topic.specific_topic not in hierarchy[topic.main_topic][topic.sub_topic]:
             hierarchy[topic.main_topic][topic.sub_topic].append(topic.specific_topic)
     
-    # Convertir a formato JSON-friendly
-    result = []
-    for main_topic, sub_topics in hierarchy.items():
-        main_topic_dict = {
-            'name': main_topic,
-            'sub_topics': []
-        }
-        for sub_topic, specific_topics in sub_topics.items():
-            main_topic_dict['sub_topics'].append({
-                'name': sub_topic,
-                'specific_topics': specific_topics
-            })
-        result.append(main_topic_dict)
+    # Ordenar para consistencia
+    ordered_hierarchy = {}
+    for main_topic in sorted(hierarchy.keys()):
+        ordered_hierarchy[main_topic] = {}
+        for sub_topic in sorted(hierarchy[main_topic].keys()):
+            ordered_hierarchy[main_topic][sub_topic] = sorted(hierarchy[main_topic][sub_topic])
     
     # Cache por 1 hora
-    cache.set(cache_key, result, 3600)
-    return result
+    cache.set(cache_key, ordered_hierarchy, 3600)
+    return ordered_hierarchy
+
 
 def get_main_topics():
     """Obtiene solo los temas principales"""
@@ -192,7 +187,7 @@ def insert_or_update_topic(main_topic, sub_topic, specific_topic, is_predefined=
 
 def delete_orphaned_topics():
     """Elimina temas que no están siendo usados por ningún test"""
-    from ..admin_panel.models import Test  # Importación diferida para evitar circular import
+    from apps.test.models import Test  # Importación diferida para evitar circular import
     
     # Obtener todos los temas únicos usados en tests
     used_topics = Test.objects.values_list(
@@ -283,7 +278,7 @@ def get_topic_statistics():
     }
     
     # Temas más usados en tests (requiere importación diferida)
-    from ..admin_panel.models import Test
+    from apps.test.models import Test
     
     most_used = Test.objects.values('main_topic', 'sub_topic', 'specific_topic')\
         .annotate(count=Count('id'))\

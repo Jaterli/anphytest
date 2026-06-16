@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 export class UserService {
 
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl = `${environment.apiUrl}/user`;
 
 
   user = signal<any | null>(null);
@@ -20,7 +20,7 @@ export class UserService {
 
   // Actualizar datos del usuario
   updateUser(userData: UserUpdateData): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update`, userData);
+    return this.http.put(`${this.apiUrl}/update-user-profile`, userData);
   }
 
   // Actualiza credenciales de acceso

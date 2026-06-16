@@ -1,5 +1,6 @@
 # results/models.py
 from django.db import models
+from django.utils import timezone
 
 class Result(models.Model):
     STATUS_CHOICES = (
@@ -7,7 +8,7 @@ class Result(models.Model):
         ('completed', 'Completado'),
         ('abandoned', 'Abandonado'),
     )
-    
+
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='results')
     test = models.ForeignKey('test.Test', on_delete=models.CASCADE, related_name='results')
     correct_answers = models.IntegerField(default=0)
@@ -15,9 +16,9 @@ class Result(models.Model):
     time_taken = models.IntegerField(default=0)  # segundos
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='in_progress')
     answers = models.JSONField(default=dict)  # {question_id: answer_id}
-    started_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
+    started_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+
     class Meta:
         db_table = 'results'
         indexes = [
@@ -25,11 +26,11 @@ class Result(models.Model):
             models.Index(fields=['user', 'status']),
             models.Index(fields=['test', 'status']),
         ]
-    
+
     @property
     def total_answered(self):
         return len(self.answers) if self.answers else 0
-    
+
     @property
     def score_percentage(self):
         total = self.correct_answers + self.wrong_answers

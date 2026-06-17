@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: angotest_postgres
+    container_name: angotest_dj_postgres
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -21,7 +21,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: angotest_backend
+    container_name: angotest_dj_backend
     restart: always
     depends_on:
       postgres:
@@ -57,16 +57,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: angotest_frontend
+    container_name: angotest_dj_frontend
     restart: always
     depends_on:
       - backend
     expose:
       - "80"  # Solo interno, no expuesto al host
-    # ELIMINADO: Los puertos ahora los maneja el reverse proxy
-    # ports:
-    #   - "8080:80"
-    #   - "8443:443"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
     networks:
@@ -84,7 +80,6 @@ volumes:
   postgres_data:
     # El volumen mantiene su nombre, no necesita red
 
-# ELIMINADA: red local angotest_network
 # Usa la red externa compartida
 networks:
   web_network:

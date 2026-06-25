@@ -20,7 +20,7 @@ urlpatterns = [
 
     # Admin Endpoints
     path('admin/<int:test_id>/', views.get_test_by_id, name='get_test_by_id'),
-    path('admin/all', views.get_all_tests, name='get_all_tests'),
+    path('admin/list/', views.get_all_tests, name='get_all_tests'),
     path('admin/create/', views.create_test, name='create_test'),
     path('admin/<int:test_id>/edit/', views.update_test, name='update_test'),
     path('admin/<int:test_id>/delete/', views.delete_test, name='delete_test'),

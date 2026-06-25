@@ -378,14 +378,14 @@
             <div class="grid grid-cols-2 gap-2 mt-3 textsize-cnf font-medium">
               <a [routerLink]="['/admin/tests/edit', test.id]"
                 class="inline-flex items-center justify-center px-3 py-2 rounded text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-300 dark:bg-blue-900 dark:hover:bg-blue-800 transition-colors">
-                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                 </svg>
                 Editar
               </a>
               <a [routerLink]="['/tests', test.id, 'start-single']"
                 class="inline-flex items-center justify-center px-3 py-2 rounded text-emerald-700 bg-emerald-100 hover:bg-emerald-200 dark:text-emerald-300 dark:bg-emerald-900 dark:hover:bg-emerald-800 transition-colors">
-                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/>
                 </svg>
                 Realizar
@@ -393,7 +393,7 @@
               <button 
                 (click)="openInviteModal(test)"
                 class="inline-flex items-center justify-center px-3 py-2 rounded text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-700/30 hover:bg-purple-200 dark:hover:bg-purple-700/50 transition-colors">
-                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
                 </svg>
                 Invitar
@@ -401,7 +401,7 @@
               <button 
                 (click)="prepareDeleteTest(test)"
                 class="inline-flex items-center justify-center px-3 py-2 rounded text-red-700 bg-red-100 hover:bg-red-200 dark:text-red-300 dark:bg-red-900 dark:hover:bg-red-800 transition-colors">
-                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                 </svg>
                 Eliminar
@@ -520,14 +520,14 @@
                   <div class="grid grid-cols-2 gap-2 textsize-cnf font-medium">
                     <a [routerLink]="['/admin/tests/edit', test.id]"
                       class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-300 dark:bg-blue-900 dark:hover:bg-blue-800 transition-colors">
-                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                       </svg>
                       Editar
                     </a>
                     <a [routerLink]="['/tests', test.id, 'start-single']"
                       class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-emerald-700 bg-emerald-100 hover:bg-emerald-200 dark:text-emerald-300 dark:bg-emerald-900 dark:hover:bg-emerald-800 transition-colors">
-                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/>
                       </svg>
                       Realizar
@@ -545,7 +545,7 @@
                     <button 
                       (click)="prepareDeleteTest(test)"
                       class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 dark:text-red-300 dark:bg-red-900 dark:hover:bg-red-800 transition-colors">
-                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                       </svg>
                       Eliminar

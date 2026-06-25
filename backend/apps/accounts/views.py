@@ -639,16 +639,18 @@ def update_guest_profile(request):
 def deactivate_account(request):
     """Desactivar cuenta propia"""
     user = request.user
-    
-    # Proteger admin principal
-    if user.id == 1:
-        return JsonResponse({'error': 'No se puede desactivar la cuenta de administrador principal'}, status=400)
-    
+ 
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     
+    # Verificar que no sea el único admin
+    if user.role == 'admin':
+        admin_count = User.objects.filter(role='admin', is_active=True).count()
+        if admin_count <= 1:
+            return JsonResponse({'error': 'No se puede eliminar el único administrador activo'}, status=400)
+        
     current_password = data.get('current_password', '')
     confirm_text = data.get('confirm_text', '')
     
@@ -659,25 +661,28 @@ def deactivate_account(request):
     if not check_password(current_password, user.password):
         return JsonResponse({'error': 'Contraseña actual incorrecta'}, status=400)
     
-    # Buscar admin para transferencia
-    admin_user = User.objects.filter(role='admin', is_active=True).exclude(id=user.id).order_by('id').first()
+
+
+    # Obtener usuario contenedor
+    container_user, error = get_container_user()
+    if container_user == None:
+        return JsonResponse(error, status=400)
     
-    if not admin_user:
-        admin_user = User.objects.filter(role='admin').exclude(id=user.id).order_by('id').first()
-        
-        if not admin_user:
-            return JsonResponse({
-                'error': 'No hay administradores disponibles. Contacte con soporte técnico.'
-            }, status=500)
+   # Verificar que no estamos eliminando al usuario contenedor
+    if user.id == container_user.pk:
+        return JsonResponse({
+            'error': 'No se puede eliminar el usuario contenedor',
+            'message': f'El usuario ID {user.id} está configurado como "container_user" y no puede ser eliminado.'
+        }, status=400)
     
     with transaction.atomic():
         # Transferir datos
         from apps.test.models import Test
-        tests_transferred = Test.objects.filter(created_by=user.id).update(created_by=admin_user.pk)
+        tests_transferred = Test.objects.filter(created_by=user.id).update(created_by=container_user.pk)
         
-        Result.objects.filter(user_id=user.id).update(user_id=admin_user.pk)
+        Result.objects.filter(user_id=user.id).update(user_id=container_user.pk)
         
-        from admin_panel.models import UserQuota
+        from apps.admin_panel.models import UserQuota
         UserQuota.objects.filter(user_id=user.id).delete()
         
         TestInvitation.objects.filter(invited_by_id=user.id).delete()
@@ -701,12 +706,7 @@ def deactivate_account(request):
     django_logout(request)
     
     return JsonResponse({
-        'message': 'Tu cuenta ha sido desactivada correctamente.',
-        'details': {
-            'tests_transferred': tests_transferred,
-            'transferred_to_admin_id': admin_user.pk,
-            'transferred_to_admin_username': admin_user.username
-        }
+        'message': 'Tu cuenta ha sido cerrada correctamente.',
     })
 
 
@@ -801,52 +801,52 @@ def get_user_profile(request, user_id):
     return JsonResponse({'user': user})
 
 
-@csrf_exempt
-@require_http_methods(["PUT", "PATCH"])
-@admin_required
-def update_user(request, user_id):
-    """Actualizar usuario (admin)"""
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
+# @csrf_exempt
+# @require_http_methods(["PUT", "PATCH"])
+# @admin_required
+# def update_user(request, user_id):
+#     """Actualizar usuario (admin)"""
+#     try:
+#         user = User.objects.get(id=user_id)
+#     except User.DoesNotExist:
+#         return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
     
-    try:
-        data = json.loads(request.body)
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+#     try:
+#         data = json.loads(request.body)
+#     except json.JSONDecodeError:
+#         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     
-    # Actualizar campos permitidos
-    updatable_fields = ['first_name', 'last_name', 'email', 'phone', 'address', 'country', 'role']
+#     # Actualizar campos permitidos
+#     updatable_fields = ['first_name', 'last_name', 'email', 'phone', 'address', 'country', 'role']
     
-    for field in updatable_fields:
-        if field in data and data[field]:
-            if field == 'email':
-                value = data[field].lower()
-                if User.objects.filter(email=value).exclude(id=user.pk).exists():
-                    return JsonResponse({'error': 'El email ya está en uso'}, status=400)
-            elif field == 'role' and data[field] not in ['user', 'admin']:
-                continue
-            else:
-                value = data[field]
-            setattr(user, field, value)
+#     for field in updatable_fields:
+#         if field in data and data[field]:
+#             if field == 'email':
+#                 value = data[field].lower()
+#                 if User.objects.filter(email=value).exclude(id=user.pk).exists():
+#                     return JsonResponse({'error': 'El email ya está en uso'}, status=400)
+#             elif field == 'role' and data[field] not in ['user', 'admin']:
+#                 continue
+#             else:
+#                 value = data[field]
+#             setattr(user, field, value)
     
-    if 'birth_date' in data and data['birth_date']:
-        try:
-            user.birth_date = datetime.strptime(data['birth_date'], '%Y-%m-%d').date()
-        except ValueError:
-            return JsonResponse({'error': 'Formato de fecha inválido. Use YYYY-MM-DD'}, status=400)
+#     if 'birth_date' in data and data['birth_date']:
+#         try:
+#             user.birth_date = datetime.strptime(data['birth_date'], '%Y-%m-%d').date()
+#         except ValueError:
+#             return JsonResponse({'error': 'Formato de fecha inválido. Use YYYY-MM-DD'}, status=400)
     
-    try:
-        user.save()
-    except Exception as e:
-        logger.error(f"Error updating user {user_id}: {str(e)}")
-        return JsonResponse({'error': 'Error al actualizar usuario'}, status=500)
+#     try:
+#         user.save()
+#     except Exception as e:
+#         logger.error(f"Error updating user {user_id}: {str(e)}")
+#         return JsonResponse({'error': 'Error al actualizar usuario'}, status=500)
     
-    return JsonResponse({
-        'user': user_to_response(user),
-        'message': 'Usuario actualizado correctamente'
-    })
+#     return JsonResponse({
+#         'user': user_to_response(user),
+#         'message': 'Usuario actualizado correctamente'
+#     })
 
 
 @require_http_methods(["GET"])
@@ -949,11 +949,7 @@ def get_users_with_stats(request):
 def delete_user(request, user_id):
     """Eliminar usuario permanentemente (admin)"""
     user_id = int(user_id)
-    
-    # Proteger admin principal
-    if user_id == 1:
-        return JsonResponse({'error': 'No se puede eliminar el administrador principal'}, status=400)
-    
+       
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
@@ -965,23 +961,88 @@ def delete_user(request, user_id):
         if admin_count <= 1:
             return JsonResponse({'error': 'No se puede eliminar el único administrador activo'}, status=400)
     
+
+    # Obtener usuario contenedor
+    container_user, error = get_container_user()
+    if container_user == None:
+        return JsonResponse(error, status=400)
+    
+   # Verificar que no estamos eliminando al usuario contenedor
+    if user_id == container_user.pk:
+        return JsonResponse({
+            'error': 'No se puede eliminar el usuario contenedor',
+            'message': f'El usuario ID {user_id} está configurado como "container_user" y no puede ser eliminado.'
+        }, status=400)
+    
+    # Ejecutar eliminación en transacción
     with transaction.atomic():
-        # Limpiar datos relacionados
-        PasswordResetToken.objects.filter(user_id=user_id).delete()
-        
-        from apps.test.models import Test
-        Test.objects.filter(created_by=user_id).update(created_by=1)
-        
-        Result.objects.filter(user_id=user_id).update(user_id=1)
-        
-        TestInvitation.objects.filter(invited_by_id=user_id).delete()
-        TestInvitation.objects.filter(guest_user_id=user_id).update(guest_user=None)
-        
-        # Eliminar usuario
-        user.delete()
+        try:
+            # Limpiar tokens de restablecimiento de contraseña
+            PasswordResetToken.objects.filter(user_id=user_id).delete()
+            
+            # Transferir tests al usuario contenedor
+            from apps.test.models import Test
+            transferred_tests = Test.objects.filter(created_by=user_id).update(created_by=container_user.pk)
+            
+            # Transferir resultados al usuario contenedor
+            transferred_results = Result.objects.filter(user_id=user_id).update(user_id=container_user.pk)
+            
+            # Eliminar invitaciones enviadas por el usuario
+            deleted_invitations_sent = TestInvitation.objects.filter(invited_by_id=user_id).delete()
+            
+            # Limpiar referencia en invitaciones recibidas
+            updated_invitations = TestInvitation.objects.filter(guest_user_id=user_id).update(guest_user=None)
+            
+            # Eliminar usuario
+            user.delete()
+            
+            # Registrar la operación (opcional)
+            logger.info(f"Usuario {user.username} (ID: {user_id}) eliminado por {request.user.username}. "
+                       f"Tests transferidos: {transferred_tests}, Resultados transferidos: {transferred_results}")
+            
+        except Exception as e:
+            # Si algo falla, la transacción se revierte automáticamente
+            logger.error(f"Error al eliminar usuario {user_id}: {str(e)}")
+            raise
     
     return JsonResponse({
         'message': 'Usuario eliminado permanentemente',
         'deleted_user_id': user_id,
-        'deleted_username': user.username
+        'deleted_username': user.username,
+        'transferred_to_user_id': container_user.pk,
+        'transferred_to_username': container_user.username,
+        'transferred_tests': transferred_tests,
+        'transferred_results': transferred_results
     })
+
+
+
+def get_container_user():
+    """
+    Obtiene el usuario contenedor desde la configuración.
+    Retorna (container_user, error_message)
+    """
+    from apps.admin_panel.models import SystemConfig
+    
+    try:
+        config = SystemConfig.objects.get(key='container_user')
+        container_user_id = int(config.value)
+    except SystemConfig.DoesNotExist:
+        return None, {
+            'error': 'No existe la configuración "container_user"',
+            'message': 'Por favor, crea una clave "container_user" en SystemConfig con el ID del usuario que recibirá los tests y resultados.'
+        }
+    except ValueError:
+        return None, {
+            'error': 'La configuración "container_user" tiene un valor inválido',
+            'message': f'El valor "{config.value}" no es un número válido.'
+        }
+    
+    try:
+        container_user = User.objects.get(id=container_user_id)
+        return container_user, None
+    except User.DoesNotExist:
+        return None, {
+            'error': f'El usuario contenedor con ID {container_user_id} no existe',
+            'message': 'Por favor, asegúrate de que el usuario especificado existe o actualiza la configuración de "container_user".'
+        }

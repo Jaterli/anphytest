@@ -9,6 +9,7 @@ import { SharedUtilsService } from '../../../shared/services/shared-utils.servic
 import { UsersStatsFilters, UserStats } from '../../models/user-stats.models';
 import { UserModalService } from '../../services/user-modal.service';
 import { UserProfileModalComponent } from '../user-profile-modal.component/user-profile-modal.component';
+import { sign } from 'crypto';
 
 @Component({
   selector: 'app-users-stats',
@@ -76,6 +77,7 @@ export class UsersStatsComponent implements OnInit {
   showSuccessModal = signal(false);
   showErrorModal = signal(false);
   showProfileModal = signal(false);
+  errorTitle = signal('');
   errorMessage = signal('');
   
   // Usuario seleccionado para eliminar
@@ -129,7 +131,8 @@ export class UsersStatsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar usuarios:', err);
-        this.errorMessage.set('Error al cargar la lista de usuarios');
+        this.errorTitle.set('Error al cargar la lista de usuarios')
+        this.errorMessage.set(err);
         this.showErrorModal.set(true);
         this.loading.set(false);
       }
@@ -289,7 +292,8 @@ export class UsersStatsComponent implements OnInit {
         console.error('Error al eliminar usuario:', err);
         this.deleting.set(false);
         this.showDeleteModal.set(false);
-        this.errorMessage.set(err.error?.error || 'Error al eliminar el usuario');
+        this.errorTitle.set(err.error?.error || 'Error al eliminar el usuario');
+        this.errorMessage.set(err.error?.message);
         this.showErrorModal.set(true);
       }
     });

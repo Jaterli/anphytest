@@ -37,21 +37,21 @@ export class DashboardService {
       }
     }
     
-    return this.http.get<DashboardResponse>(`${this.apiUrl}/dashboard`, { params });
+    return this.http.get<DashboardResponse>(`${this.apiUrl}/dashboard/`, { params });
   }
 
   // Obtener estadísticas detalladas de un test
   getTestStats(testId: number): Observable<TestDetailedStats> {
-    return this.http.get<TestDetailedStats>(`${this.apiUrl}/dashboard/tests/${testId}/stats`);
+    return this.http.get<TestDetailedStats>(`${this.apiUrl}/dashboard/tests/${testId}/stats/`);
   }
 
   // Obtener estadísticas detalladas de un usuario
   getUserStats(userId: number): Observable<UserDetailedStats> {
-    return this.http.get<UserDetailedStats>(`${this.apiUrl}/dashboard/users/${userId}/stats`);
+    return this.http.get<UserDetailedStats>(`${this.apiUrl}/dashboard/users/${userId}/stats/`);
   }
 
   // Obtener años disponibles para filtrado
   getAvailableYears(): Observable<number[]> {
-    return this.http.get<number[]>(`${this.apiUrl}/dashboard/years`);
+    return this.http.get<number[]>(`${this.apiUrl}/dashboard/years/`);
   }
 }

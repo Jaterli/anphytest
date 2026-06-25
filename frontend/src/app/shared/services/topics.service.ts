@@ -29,7 +29,7 @@ export class TopicsService {
       return of(cached);
     }
 
-    return this.http.get<string[]>(`${this.apiUrl}/main`).pipe(
+    return this.http.get<string[]>(`${this.apiUrl}/main/`).pipe(
       map(topics => {
         this.mainTopicsCache.set(topics);
         return topics;
@@ -42,7 +42,7 @@ export class TopicsService {
       return of(this.subTopicsCache.get(mainTopic)!);
     }
 
-    return this.http.get<string[]>(`${this.apiUrl}/${mainTopic}/sub_topics`).pipe(
+    return this.http.get<string[]>(`${this.apiUrl}/${mainTopic}/sub_topics/`).pipe(
       map(subTopics => {
         this.subTopicsCache.set(mainTopic, subTopics);
         return subTopics;
@@ -56,7 +56,7 @@ export class TopicsService {
       return of(this.specificTopicsCache.get(cacheKey)!);
     }
 
-    return this.http.get<string[]>(`${this.apiUrl}/${mainTopic}/${subTopic}/specific_topics`).pipe(
+    return this.http.get<string[]>(`${this.apiUrl}/${mainTopic}/${subTopic}/specific_topics/`).pipe(
       map(specificTopics => {
         this.specificTopicsCache.set(cacheKey, specificTopics);
         return specificTopics;

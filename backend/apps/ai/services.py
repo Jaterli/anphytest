@@ -142,7 +142,7 @@ def check_user_quota(user_id: int) -> Tuple[bool, Dict[str, Any]]:
         quota = UserQuota.objects.get(user_id=user_id, month_year=month_year)
     except UserQuota.DoesNotExist:
         # Crear nueva quota
-        max_requests = 5
+        max_requests = int(os.getenv('AI_REQUESTS_PER_MONTH', 5))
         try:
             config = SystemConfig.objects.get(key='ai_requests_per_month')
             max_requests = int(config.value)
@@ -155,13 +155,19 @@ def check_user_quota(user_id: int) -> Tuple[bool, Dict[str, Any]]:
             max_requests=max_requests,
             used_requests=0
         )
-        return True, {'max_requests': max_requests, 'used_requests': 0, 'remaining': max_requests}
+        return True, {
+            'month_year': month_year, 
+            'max_requests': max_requests, 
+            'used_requests': 0, 
+            'remaining_requests': max_requests
+        }
     
     if quota.used_requests >= quota.max_requests:
         return False, {
+            'month_year': month_year, 
             'max_requests': quota.max_requests,
             'used_requests': quota.used_requests,
-            'remaining': 0,
+            'remaining_requests': 0,
             'message': 'Límite de tests generados para este mes alcanzado'
         }
     

@@ -52,18 +52,7 @@ export class TestsManagementService {
       params = params.set('sort_order', 'desc');
     }
 
-    return this.http.get<TestsListResponse>(`${this.apiUrl}/all`, { params });
+    return this.http.get<TestsListResponse>(`${this.apiUrl}/list/`, { params });
   }
-
-  // Método para obtener opciones de filtrado
-  // getFilterOptions(): Observable<TestsFilterOptions> {
-  //   return this.http.get<TestsFilterOptions>(`${this.apiUrl}/filter-options`);
-  // }
-
-
-  // Método para obtener estadísticas generales del sistema
-  // getSystemStats(): Observable<any> {
-  //   return this.http.get(`${this.apiUrl}/system-stats`);
-  // }
 
 }

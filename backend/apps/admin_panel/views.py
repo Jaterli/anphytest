@@ -689,14 +689,6 @@ def admin_get_system_configs_grouped(request):
     return JsonResponse(grouped)
 
 
-@require_http_methods(["GET"])
-@admin_required
-def admin_get_system_configs_by_prefix(request, prefix):
-    """Obtener configuraciones por prefijo de clave"""
-    configs = list(SystemConfig.objects.filter(key__startswith=f"{prefix}."))
-    return JsonResponse([_config_to_dict(c) for c in configs], safe=False)
-
-
 # ===========================================================================
 # Dashboard views
 # ===========================================================================

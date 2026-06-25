@@ -11,7 +11,6 @@ urlpatterns = [
     path('topics/hierarchy/', views.get_topic_hierarchy_view, name='get_topic_hierarchy'),
     path('topics/validate/', views.validate_topic, name='validate_topic'),
     path('topics/statistics/', views.get_topic_statistics_view, name='topic_statistics'),
-    path('topics/levels/', views.get_predefined_levels_view, name='predefined_levels'),
     
     # Endpoints de administración
     path('topics/create/', views.create_topic, name='create_topic'),

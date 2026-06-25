@@ -136,7 +136,7 @@ export class ResultsManagementService {
 
   // Eliminar múltiples resultados
   deleteResultsBulk(resultIds: number[]): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/bulk-delete`, {
+    return this.http.delete(`${this.apiUrl}/bulk-delete/`, {
       body: { ids: resultIds }
     });
   }

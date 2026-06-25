@@ -77,19 +77,19 @@ export class QuotaManagementService {
   // Actualizar cuota
   updateQuota(id: number, data: UpdateQuotaInput): Observable<{ quota: UserQuota; message: string }> {
     return this.http.put<{ quota: UserQuota; message: string }>(
-      `${this.apiUrl}/${id}/`,
+      `${this.apiUrl}/${id}/update/`,
       data
     );
   }
 
   // Eliminar cuota
   deleteQuota(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}/`);
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}/delete/`);
   }
 
   // Eliminar múltiples cuotas
   deleteQuotasBulk(ids: number[]): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/bulk/`, {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/bulk-delete/`, {
       body: { ids }
     });
   }

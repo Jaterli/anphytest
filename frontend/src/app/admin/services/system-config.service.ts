@@ -48,6 +48,6 @@ export class SystemConfigService {
 
   // Actualización masiva
   bulkUpdate(configs: BulkUpdateConfigDTO[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/bulk-update`, configs);
+    return this.http.post(`${this.apiUrl}/bulk-update/`, configs);
   }
 }

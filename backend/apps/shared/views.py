@@ -171,12 +171,6 @@ def create_topic(request):
         logger.error(f"Error creating topic: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
 
-@require_http_methods(["GET"])
-def get_predefined_levels_view(request):
-    """Obtiene los niveles predefinidos"""
-    levels = get_level_choices()
-    return JsonResponse(levels, safe=False)
-
 
 # ====== Configuraciones del Sistema ======
 

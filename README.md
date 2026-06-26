@@ -23,13 +23,14 @@ Para facilitar la evaluación completa de todas las funcionalidades de la aplica
 | **Email** | `admin@angotest.com` |
 | **Contraseña** | `13113013@WfX` |
 
-### 🔑 Credenciales de usuarios
+### 🔑 Credenciales de usuario
 
 | Campo | Valor |
 |-------|-------|
-| **Email** | `test_user_n@example.com` |
+| **Email** | `test_user_n@example.com` *|
 | **Contraseña** | `test123` |
 
+\* Sustituir 'n' por el número correspondiente.
 
 ### 📚 Datos de Prueba
 

@@ -20,7 +20,6 @@ urlpatterns = [
     path('system-configs/grouped/', views.admin_get_system_configs_grouped, name='admin_get_system_configs_grouped'),
     path('system-configs/default/', views.admin_get_default_system_configs, name='admin_get_default_system_configs'),
     path('system-configs/export/csv/', views.admin_export_system_configs_csv, name='admin_export_system_configs_csv'),
-    path('system-configs/bulk-update/', views.admin_bulk_update_system_configs, name='admin_bulk_update_system_configs'),
     path('system-configs/create/', views.admin_create_system_config, name='admin_create_system_config'),
     path('system-configs/key/<str:key>/', views.admin_get_system_config_by_key, name='admin_get_system_config_by_key'),
     path('system-configs/<int:config_id>/', views.admin_get_system_config, name='admin_get_system_config'),

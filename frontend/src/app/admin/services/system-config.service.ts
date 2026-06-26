@@ -51,8 +51,4 @@ export class SystemConfigService {
     return this.http.delete(`${this.apiUrl}/${id}/delete/`);
   }
 
-  // Actualización masiva
-  bulkUpdate(configs: BulkUpdateConfigDTO[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/bulk-update/`, configs);
-  }
 }

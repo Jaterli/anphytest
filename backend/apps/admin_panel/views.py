@@ -534,12 +534,21 @@ def admin_get_system_config(request, config_id):
 @require_http_methods(["GET"])
 @admin_required
 def admin_get_system_config_by_key(request, key):
-    """Obtener el valor de una configuración por su clave"""
+    """Obtener el valor de una configuración por su clave (fallback a settings.SYSTEM_CONFIG)"""
     try:
+        # Intentar obtener de la base de datos
         config = SystemConfig.objects.get(key=key)
+        return HttpResponse(config.value, content_type='text/plain')
     except SystemConfig.DoesNotExist:
-        return JsonResponse({'error': 'Configuración no encontrada'}, status=404)
-    return HttpResponse(config.value, content_type='text/plain')
+        # Si no existe en la base de datos, buscar en settings.SYSTEM_CONFIG
+        if hasattr(settings, 'SYSTEM_CONFIG') and key in settings.SYSTEM_CONFIG:
+            value = settings.SYSTEM_CONFIG[key]
+            return HttpResponse(str(value), content_type='text/plain')
+        else:
+            return JsonResponse({'error': 'Configuración no encontrada'}, status=404)
+    except Exception as e:
+        logger.error(f"Error getting system config by key {key}: {str(e)}")
+        return JsonResponse({'error': 'Error al obtener configuración'}, status=500)
 
 
 @require_http_methods(["GET"])
@@ -636,44 +645,6 @@ def admin_delete_system_config(request, config_id):
     pk = config.pk
     config.delete()
     return JsonResponse({'message': 'Configuración eliminada correctamente', 'id': pk})
-
-
-@csrf_exempt
-@require_http_methods(["POST"])
-@admin_required
-def admin_bulk_update_system_configs(request):
-    """Actualizar múltiples configuraciones en lote"""
-    try:
-        data = json.loads(request.body)
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
-    if not isinstance(data, list) or len(data) == 0:
-        return JsonResponse({'error': 'Se esperaba una lista de configuraciones no vacía'}, status=400)
-
-    for i, item in enumerate(data):
-        if not item.get('key'):
-            return JsonResponse({'error': f'El item {i} no tiene key'}, status=400)
-        if item.get('value') is None:
-            return JsonResponse({'error': f'El item {i} no tiene value'}, status=400)
-
-    updated_count = 0
-    with transaction.atomic():
-        for item in data:
-            key = item['key'].strip()
-            value = item['value']
-            updated = SystemConfig.objects.filter(key=key).update(value=value)
-            if updated:
-                updated_count += updated
-            elif item.get('create_if_not_exists', False):
-                SystemConfig.objects.create(
-                    key=key,
-                    value=value,
-                    description=item.get('description', ''),
-                )
-                updated_count += 1
-
-    return JsonResponse({'message': 'Configuraciones actualizadas correctamente', 'updated_count': updated_count})
 
 
 @require_http_methods(["GET"])

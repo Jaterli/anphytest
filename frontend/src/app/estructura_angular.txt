@@ -1,0 +1,48 @@
+.
+├── admin
+│   ├── admin-dashboard
+│   ├── invitations-management
+│   ├── models
+│   ├── quota-management
+│   ├── services
+│   ├── shared-components
+│   ├── system-config
+│   ├── tests
+│   │   ├── admin-test-list
+│   │   ├── test-create
+│   │   ├── test-edit
+│   │   └── test-stats-modal
+│   └── user
+│       ├── results-list
+│       ├── user-profile-modal.component
+│       ├── user-result-details-modal
+│       ├── user-results
+│       ├── users-stats
+│       └── user-stats-modal
+├── guards
+├── interceptors
+├── shared
+│   ├── components
+│   │   ├── footer
+│   │   ├── forbidden
+│   │   ├── generate-test
+│   │   ├── invitation
+│   │   ├── login
+│   │   ├── navbar
+│   │   ├── privacy-policy
+│   │   ├── register
+│   │   ├── reset-password
+│   │   └── terms-conditions
+│   ├── models
+│   └── services
+└── user
+    ├── dashboard
+    ├── delete-account
+    ├── profile
+    └── tests
+        ├── completed
+        ├── in-progress
+        ├── no-started
+        └── test-single
+
+45 directories

@@ -14,7 +14,7 @@ backend-go/*
 # Python
 __pycache__/
 *.py[cod]
-*\.class
+*$py.class
 *.so
 *.egg
 *.egg-info/
